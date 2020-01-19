@@ -1,5 +1,6 @@
 from rl.gridworld.Action import Action
 import os
+from itertools import product
 
 basic_actions = [
     Action("U", -1, 0),
@@ -17,7 +18,6 @@ class Grid:
         self.pos = pos
         self.player = player
         self.is_over = False
-        self.reward = 0
 
     def set_board(self, rewards, blocks):
         self.entity = {**rewards, **blocks}
@@ -35,6 +35,10 @@ class Grid:
                 # else:
                 print(" {} ".format(entity_at_position), end="")
             print()
+
+    def all_states(self):
+        return [(i, j) for i, j in product(range(self.height), range(self.width)) if
+                self.is_valid_position((i, j))]
 
     def possible_actions(self):
         possible_actions = []
@@ -58,13 +62,22 @@ class Grid:
 
     def player_take_action(self, action):
         new_position = action.new_position(self.pos)
+        reward = 0
         if self.is_valid_position(new_position):
             if new_position in self.entity:
                 e = self.entity[new_position]
-                self.reward += e.interact(self.player)
+                reward += e.interact(self.player)
                 if e.is_terminal:
                     self.is_over = True
-                del self.entity[new_position]
+                else:
+                    del self.entity[new_position]
             self.pos = new_position
+            return reward
         else:
             raise Exception("Invalid Move!!")
+
+    def set_player_position(self, position):
+        self.pos = position
+
+    def is_terminal_state(self, position):
+        return position in self.entity and self.entity[position].is_terminal
