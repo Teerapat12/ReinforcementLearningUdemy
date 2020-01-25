@@ -5,9 +5,9 @@ from rl.gridworld.entity.Block import Block
 from rl.gridworld.Action import Action
 
 
-def standard_grid():
+def standard_grid(success_prob = 1.0, normal_reward = 0.0):
     p1 = Player("A")
-    grid = Grid(3, 4, p1, (2, 3))
+    grid = Grid(3, 4, p1, (2, 3), success_prob = success_prob, normal_reward=normal_reward)
     rewards = {
         (0, 3): Reward(1, is_terminal=True), (1, 3): Reward(-1, is_terminal=True)
     }

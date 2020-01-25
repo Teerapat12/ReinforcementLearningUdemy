@@ -1,5 +1,7 @@
+import numpy as np
 from rl.gridworld.Action import Action
 import os
+import random
 from itertools import product
 
 basic_actions = [
@@ -11,13 +13,15 @@ basic_actions = [
 
 
 class Grid:
-    def __init__(self, height, width, player, pos):
+    def __init__(self, height, width, player, pos, success_prob=1.0, normal_reward = 0):
         self.width = width
         self.height = height
         self.entity = {}
         self.pos = pos
         self.player = player
         self.is_over = False
+        self.success_prob = success_prob
+        self.normal_reward = normal_reward
 
     def set_board(self, rewards, blocks):
         self.entity = {**rewards, **blocks}
@@ -61,8 +65,15 @@ class Grid:
             return True
 
     def player_take_action(self, action):
-        new_position = action.new_position(self.pos)
-        reward = 0
+        # Randomness
+        randomed_action = action
+        if random.random() >= self.success_prob:
+            other_actions = [a for a in self.possible_actions() if a.move_command != action.move_command]
+            randomed_action = np.random.choice(other_actions)
+
+        # Start moving
+        new_position = randomed_action.new_position(self.pos)
+        reward = self.normal_reward
         if self.is_valid_position(new_position):
             if new_position in self.entity:
                 e = self.entity[new_position]
