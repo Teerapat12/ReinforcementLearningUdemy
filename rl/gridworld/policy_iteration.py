@@ -13,6 +13,7 @@ if __name__ == "__main__":
     print("Initialize steps")
     alpha = 0.9
     epsilon = 10e-4
+    iterations = 0
     V = {state: 0 for state in states}
 
 
@@ -27,7 +28,7 @@ if __name__ == "__main__":
     # repeat until policy converged
 
     while True:
-
+        iterations += 1
         # policy evaluation
         while True:
             biggest_change = -math.inf
@@ -74,3 +75,4 @@ print("values:")
 print_values(V, grid)
 print("policy:")
 print_policy(policy, grid)
+print("Iterations: %d"%iterations)

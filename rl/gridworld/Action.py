@@ -6,3 +6,9 @@ class Action:
 
     def new_position(self, position):
         return position[0] + self.move_y, position[1] + self.move_x
+
+    def __str__(self):
+        return self.move_command
+
+    def __repr__(self):
+        return self.move_command

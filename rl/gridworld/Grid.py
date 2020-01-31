@@ -3,6 +3,7 @@ from rl.gridworld.Action import Action
 import os
 import random
 from itertools import product
+from copy import deepcopy
 
 basic_actions = [
     Action("U", -1, 0),
@@ -18,10 +19,16 @@ class Grid:
         self.height = height
         self.entity = {}
         self.pos = pos
+        self.starting_pos = deepcopy(pos)
         self.player = player
         self.is_over = False
         self.success_prob = success_prob
         self.normal_reward = normal_reward
+
+    def reset_board(self):
+        self.pos =self.starting_pos
+        self.is_over = False
+        # Make non-terminal reward reappear too, pls
 
     def set_board(self, rewards, blocks):
         self.entity = {**rewards, **blocks}

@@ -4,8 +4,26 @@ from rl.gridworld.entity.Reward import Reward
 from rl.gridworld.entity.Block import Block
 from itertools import product
 import math
-from rl.gridworld.utils import *
+from rl.gridworld.utils import standard_grid
 from rl.gridworld.Action import Action
+
+def print_values(V, grid):
+    for i in range(grid.height):
+        for j in range(grid.width):
+            v = V.get((i, j), 0)
+            if v >= 0:
+                print(" %.2f|" % v, end='')
+            else:
+                print("%.2f|" % v, end='')
+        print("")
+
+
+def print_policy(P, grid):
+    for i in range(grid.height):
+        for j in range(grid.width):
+            a = P.get((i, j), Action(" ", 0, 0)).move_command
+            print(" %s |" % a, end='')
+        print("")
 
 
 def iterative_value_evaluation(grid, gamma, epsilon):
@@ -30,7 +48,6 @@ def iterative_value_evaluation(grid, gamma, epsilon):
                 biggest_change = max(biggest_change, abs(old_v - V[s]))
         print_values(V, grid)
         print("+++")
-    print(V)
 
 policy_1 =  {
     (2, 0 ): Action("U", -1, 0),
@@ -54,6 +71,7 @@ def fix_policy_iterative_value_evaluation(grid, gamma, epsilon, policy):
         for s in states:
             old_v = V.get(s,0)
             if not grid.is_terminal_state(s):
+                new_v = 0
                 action = policy[s]
                 grid.set_player_position(s)
                 r = grid.player_take_action(action)
