@@ -25,6 +25,9 @@ class Grid:
         self.success_prob = success_prob
         self.normal_reward = normal_reward
 
+    def get_current_position(self):
+        return deepcopy(self.pos)
+
     def reset_board(self):
         self.pos =self.starting_pos
         self.is_over = False

@@ -4,6 +4,7 @@ from rl.gridworld.utils import standard_grid
 from rl.gridworld.Action import Action
 from collections import defaultdict
 from rl.gridworld.utils import *
+import seaborn as sns
 
 def play_game(grid, policy):
     """
@@ -58,6 +59,7 @@ if __name__ == "__main__":
     print("Start playing games")
 
     game_nums = 500
+    deltas = []
 
     for i in range(game_nums):
         iterations += 1
@@ -65,6 +67,7 @@ if __name__ == "__main__":
 
         # Policy evaluation
         seen_state_actions = {}
+        max_difference = -math.inf
         for (state, action, return_g) in states_actions_returns:
             sa = (state, action)
             if sa in seen_state_actions:
@@ -73,7 +76,8 @@ if __name__ == "__main__":
             counts[sa]+=1
             Q[sa] = (Q[sa] * (counts[sa] - 1) + return_g) / counts[sa]
             seen_state_actions = sa
-
+            max_difference = max(max_difference, abs(old_q - Q[sa]))
+        deltas.append(max_difference)
         # Policy extraction
         for s in possible_states:
             grid.set_player_position(s)
@@ -82,14 +86,17 @@ if __name__ == "__main__":
             max_action = None
             max_reward = -math.inf
             for a in possible_actions:
-                if s == (1, 3):
                 q = Q[(s, a)]
                 if q > max_reward:
                     max_reward = q
                     max_action = a
+
             policy[s] = max_action
         print_policy(policy, grid)
 
 print("policy:")
 print_policy(policy, grid)
 print("Iterations: %d"%iterations)
+
+
+sns.lineplot(deltas)
